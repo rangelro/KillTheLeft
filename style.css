@@ -30,6 +30,18 @@ body {
     display: flex;
     flex-direction: column;
 }
+#game-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(37, 36, 36, 0.18);
+    pointer-events: none;
+    z-index: 0;
+}
+#game-container > * {
+    position: relative;
+    z-index: 1;
+}
 canvas {
     display: block;
     width: 100%;
@@ -53,7 +65,8 @@ h1 {
 #score {
     font-size: 16px;
 }
-#fullscreen-button {
+#fullscreen-button,
+#mute-button {
     background: none;
     border: none;
     cursor: pointer;
@@ -64,11 +77,16 @@ h1 {
     transition: transform 0.2s;
     outline: none;
 }
-#fullscreen-button:hover {
+#fullscreen-button:hover,
+#mute-button:hover {
     transform: scale(1.1);
 }
-#fullscreen-button svg {
+#fullscreen-button svg,
+#mute-button svg {
     fill: #58a6ff;
+}
+#mute-button.is-muted svg {
+    fill: #e74c3c;
 }
 #lives-container {
     display: flex;
