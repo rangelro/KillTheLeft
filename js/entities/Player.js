@@ -7,7 +7,10 @@ export class Player {
         this.x = canvasWidth / 2;
         this.y = canvasHeight - 60;
         
+        this.baseSpeed = 7;
         this.speed = 7;
+        this.speedMultiplier = 1;
+        
         this.invincible = false;
         this.invincibleTimer = 0;
         this.shootCooldown = 0;
@@ -27,10 +30,13 @@ export class Player {
     }
 
     update(input, canvasWidth, canvasHeight) {
-        if (input.isPressed('a') || input.isPressed('arrowleft')) this.x -= this.speed;
-        if (input.isPressed('d') || input.isPressed('arrowright')) this.x += this.speed;
-        if (input.isPressed('w') || input.isPressed('arrowup')) this.y -= this.speed;
-        if (input.isPressed('s') || input.isPressed('arrowdown')) this.y += this.speed;
+        // Aplica o multiplicador de velocidade (útil para tela cheia)
+        const currentSpeed = this.speed * this.speedMultiplier;
+
+        if (input.isPressed('a') || input.isPressed('arrowleft')) this.x -= currentSpeed;
+        if (input.isPressed('d') || input.isPressed('arrowright')) this.x += currentSpeed;
+        if (input.isPressed('w') || input.isPressed('arrowup')) this.y -= currentSpeed;
+        if (input.isPressed('s') || input.isPressed('arrowdown')) this.y += currentSpeed;
 
         // Limites do Canvas
         this.x = Math.min(Math.max(this.x, this.width / 2), canvasWidth - this.width / 2);
@@ -42,6 +48,10 @@ export class Player {
             this.invincibleTimer--;
             if (this.invincibleTimer <= 0) this.invincible = false;
         }
+    }
+
+    setSpeedScale(scale) {
+        this.speedMultiplier = scale;
     }
 
     shoot(bullets) {

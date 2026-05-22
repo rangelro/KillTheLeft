@@ -34,6 +34,10 @@ function resizeGame() {
     if (game.player) {
         game.player.x = Math.min(Math.max(game.player.x, game.player.width / 2), canvas.width - game.player.width / 2);
         game.player.y = Math.min(Math.max(game.player.y, game.player.height / 2), canvas.height - game.player.height / 2);
+        
+        // Aumenta a velocidade de movimentação em tela cheia para compensar o tamanho da tela
+        const speedMultiplier = isFullscreen ? 1.5 : 1;
+        game.player.setSpeedScale(speedMultiplier);
     }
 }
 
