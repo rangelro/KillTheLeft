@@ -26,8 +26,8 @@ export class Game {
         this.targetSpawnTimer = 120;
         this.lifeUpSpawnTimer = 500;
         this.scoreMilestone = 500;
-        this.nextPowerUpScore = 1500;
-        this.powerUpInterval = 1500;
+        this.nextPowerUpScore = 1000;
+        this.powerUpInterval = 1000;
         this.currentDifficulty = null;
     }
 
@@ -41,10 +41,15 @@ export class Game {
         this.lifeUps = [];
         
         this.scoreMilestone = 500;
-        this.nextPowerUpScore = 1500;
-        this.powerUpInterval = 1500;
+        this.nextPowerUpScore = 1000;
+        this.powerUpInterval = 1000;
         
-        this.player = new Player(this.canvas.width, this.canvas.height);
+        this.player = new Player(
+            this.canvas.width, 
+            this.canvas.height, 
+            difficulty.playerBulletSpeed, 
+            difficulty.playerCooldown
+        );
         this.gameRunning = true;
         this.gamePaused = false;
         this.targetSpawnTimer = 120;
@@ -241,17 +246,53 @@ export class Game {
         }
         if (this.score >= this.nextPowerUpScore) {
             this.awardPowerUp();
-            this.powerUpInterval += 500;
+            this.powerUpInterval += 250; // Escalona de forma mais amigável
             this.nextPowerUpScore += this.powerUpInterval;
         }
     }
 
     awardPowerUp() {
-        const pu = POWER_UP_LIST[Math.floor(Math.random() * POWER_UP_LIST.length)];
-        this.player.applyPowerUp(pu.id);
+        this.gamePaused = true;
+        this.audio.pause();
         
-        const message = `<div style="font-size: 20px; color: #f1c40f; margin-bottom: 10px;">POWER UP ADQUIRIDO!</div><div style="font-size: 28px;">${pu.name}</div><div style="font-size: 14px; margin-top: 10px; color: #ecf0f1;">${pu.desc}</div>`;
-        this.ui.showFlashMessage(message, true);
+        // Seleciona 3 power-ups aleatórios únicos
+        const shuffled = [...POWER_UP_LIST].sort(() => 0.5 - Math.random());
+        const selections = shuffled.slice(0, 3);
+        
+        let cardsHTML = selections.map(pu => `
+            <div class="card patriota" data-id="${pu.id}">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24" width="30" height="30"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                </div>
+                <h3>${pu.name}</h3>
+                <p>${pu.desc}</p>
+            </div>
+        `).join('');
+
+        const content = `
+            <div id="modal-content">
+                <div id="modal-title" style="color: #f1c40f;">CARTAS DO PATRIOTA</div>
+                <p style="font-size: 14px; margin-bottom: 20px;">Escolha sua evolução tecnológica:</p>
+                <div class="powerup-cards">
+                    ${cardsHTML}
+                </div>
+            </div>
+        `;
+        
+        this.ui.showModal(content);
+
+        // Bind clicks on cards
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                const id = card.getAttribute('data-id');
+                this.player.applyPowerUp(id);
+                this.ui.hideModal();
+                this.gamePaused = false;
+                this.audio.play();
+                this.loop();
+            });
+        });
     }
 
     endGame() {
@@ -260,7 +301,7 @@ export class Game {
         
         const content = `
             <div id="modal-content">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Luiz_In%C3%A1cio_Lula_da_Silva_em_24_de_fevereiro_de_2023.jpg/440px-Luiz_In%C3%A1cio_Lula_da_Silva_em_24_de_fevereiro_de_2023.jpg" 
+                <img src="https://revistacult.uol.com.br/home/wp-content/uploads/2017/07/Lula_Coluna-Marcia-Tiburi.jpg" 
                      alt="Foto do Lula" 
                      class="game-over-img"
                      onerror="this.onerror=null;this.src='https://placehold.co/150x150/c0392b/FFFFFF?text=L';">

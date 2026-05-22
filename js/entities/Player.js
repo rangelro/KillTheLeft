@@ -1,7 +1,7 @@
 import { Bullet } from './Bullet.js';
 
 export class Player {
-    constructor(canvasWidth, canvasHeight) {
+    constructor(canvasWidth, canvasHeight, bulletSpeed = 10, baseCooldown = 25) {
         this.width = 60;
         this.height = 60;
         this.x = canvasWidth / 2;
@@ -11,8 +11,8 @@ export class Player {
         this.invincible = false;
         this.invincibleTimer = 0;
         this.shootCooldown = 0;
-        this.baseCooldown = 25;
-        this.bulletSpeed = 10;
+        this.baseCooldown = baseCooldown;
+        this.bulletSpeed = bulletSpeed;
         
         this.shotType = 'normal'; // normal, v, spread3, spread4
         this.iceShot = false;
