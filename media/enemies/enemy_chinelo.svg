@@ -1,0 +1,8 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sola do chinelo -->
+  <path d="M35 20 Q35 10 50 10 Q65 10 65 20 L65 80 Q65 90 50 90 Q35 90 35 80 Z" fill="#ffffff" stroke="#333" stroke-width="2"/>
+  <!-- Tiras -->
+  <path d="M50 35 L35 50 M50 35 L65 50" stroke="#009B3A" stroke-width="4" stroke-linecap="round"/>
+  <!-- Letra H -->
+  <text x="50" y="70" font-family="Arial" font-size="30" font-weight="bold" fill="#002776" text-anchor="middle">H</text>
+</svg>

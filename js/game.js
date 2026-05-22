@@ -97,7 +97,7 @@ export class Game {
         // Spawning
         this.targetSpawnTimer--;
         if (this.targetSpawnTimer <= 0) {
-            this.targets.push(new Target(this.canvas.width, this.currentDifficulty));
+            this.targets.push(new Target(this.canvas.width, this.currentDifficulty, this.score));
             this.targetSpawnTimer = Math.max(
                 this.currentDifficulty.minSpawnRate, 
                 this.currentDifficulty.spawnRateBase - this.score / this.currentDifficulty.spawnRateScaling
@@ -112,7 +112,7 @@ export class Game {
 
         // Updates
         this.bullets.forEach(b => b.update(this.canvas.width));
-        this.enemyBullets.forEach(b => b.update());
+        this.enemyBullets.forEach(b => b.update({x: this.player.x, y: this.player.y}));
         this.targets.forEach(t => t.update(this.canvas.height, {x: this.player.x, y: this.player.y}, this.enemyBullets));
         this.lifeUps.forEach(l => l.update());
 
@@ -157,13 +157,18 @@ export class Game {
                 const t = this.targets[j];
                 if (b && t && Math.hypot(b.x - t.x, b.y - t.y) < t.radius + b.height) {
                     if (b.isIce) { t.slowed = true; t.slowTimer = 300; }
-                    if (b.isElectric) { this.chainElectric(t, j); }
-                    if (b.isChain) { this.chainBullet(b, j); }
+                    
+                    const isDead = t.takeDamage(1);
+                    
+                    if (isDead) {
+                        if (b.isElectric) { this.chainElectric(t, j); }
+                        if (b.isChain) { this.chainBullet(b, j); }
+                        this.targets.splice(j, 1);
+                        this.score += 25;
+                    }
 
-                    this.targets.splice(j, 1);
                     if (!b.isChain) this.bullets.splice(i, 1);
                     
-                    this.score += 25;
                     this.ui.updateUI(this.score, this.lives);
                     this.checkMilestones();
                     break;

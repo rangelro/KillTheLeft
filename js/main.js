@@ -79,8 +79,36 @@ gameContainer.addEventListener('click', () => {
 canvas.addEventListener('mousemove', (e) => { 
     if (game.gamePaused || !game.gameRunning) return;
     const rect = canvas.getBoundingClientRect(); 
-    if(game.player) game.player.x = e.clientX - rect.left; 
+    const scaleX = canvas.width / rect.width;
+    if(game.player) game.player.x = (e.clientX - rect.left) * scaleX; 
 });
+
+canvas.addEventListener('touchmove', (e) => {
+    if (game.gamePaused || !game.gameRunning) return;
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    if(game.player) {
+        game.player.x = (touch.clientX - rect.left) * scaleX;
+        game.player.y = (touch.clientY - rect.top) * scaleY;
+    }
+}, { passive: false });
+
+canvas.addEventListener('touchstart', (e) => {
+    if (game.gamePaused || !game.gameRunning) return;
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    if(game.player) {
+        game.player.x = (touch.clientX - rect.left) * scaleX;
+        game.player.y = (touch.clientY - rect.top) * scaleY;
+        // Atira ao tocar se estiver rodando
+        game.player.shoot(game.bullets);
+    }
+}, { passive: false });
 
 function toggleFullScreen() {
     if (!document.fullscreenElement) {

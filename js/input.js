@@ -6,7 +6,6 @@ export class InputHandler {
             const key = e.key.toLowerCase();
             this.keys[key] = true;
             
-            // Prevent default for specific keys to avoid scrolling
             if ([' ', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
                 e.preventDefault();
             }
@@ -15,9 +14,19 @@ export class InputHandler {
         window.addEventListener('keyup', (e) => {
             this.keys[e.key.toLowerCase()] = false;
         });
+
+        // Previne gestos de sistema no mobile que atrapalham o jogo
+        window.addEventListener('touchstart', (e) => {
+            if (e.target.tagName === 'CANVAS') e.preventDefault();
+        }, { passive: false });
+        
+        window.addEventListener('touchend', (e) => {
+            if (e.target.tagName === 'CANVAS') e.preventDefault();
+        }, { passive: false });
     }
 
     isPressed(key) {
         return !!this.keys[key.toLowerCase()];
     }
 }
+
